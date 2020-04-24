@@ -1,69 +1,69 @@
-def getinput():
+def getinput(): #Gets input from the user row wise
     board=[]
     for i in range(1,10,1):
         row=input('Enter entries of row number '+str(i) +" :  ")
         board.append(row)
     return board
 
-def printboard(board):
-    print("-"*23)
+def printboard(board): #Prints the sudoku board
+    print("-"*23) # Starting Line (Horizontal Line)
     for row in board:
-        print("| ",end="")
+        print("| ",end="") # Starting line (Vericle Line)
         for i in range(0,9,1):
             print(row[i]+" ",end="")
             if i==2 or i==5 or i==8:
-                print("|",end="")
+                print("|",end="") #Internal 3x3 grid lines (horizontal)
         print()
         if board.index(row)==2 or board.index(row)==5 or board.index(row)==8:
-            print("-"*23)
+            print("-"*23) # Ending Line (Horizontal Line)
 
-def markboard(board):
+def markboard(board): # Marking intial board with filled and unfilled elements for backtracking
     refboard=[]
     for row in board:
-        refrow=""
+        refrow="" #initialising string
         for element in row:
-            if element.isnumeric():
-                refrow=refrow+"1"
+            if element.isnumeric(): #Checking initial element is filled or not
+                refrow=refrow+"1" #if filled mark as '1' in reference board
             else:
-                refrow=refrow+"0"
-        refboard.append(refrow)
+                refrow=refrow+"0" #if unfilled mark as '0' in reference board
+        refboard.append(refrow) #append row
     return refboard
 
-def getinterboardrow(row,column):
+def getinterboardrow(row,column): #Get 3x3 grid as a single string
     interrow=int(row/3)
     intercolumn=int(column/3)
     interboard=createinterboard(board)
     return interboard[interrow*3+intercolumn]
 
-def fillelement(row,column,start):
-    for x in range(int(start)+1,10,1):
-        if str(x) in board[row]:
-            continue
-        else:
-            elecol=''
+def fillelement(row,column,start): #enter valid entry in row x column
+    for x in range(int(start)+1,10,1): #check each number from start
+        if str(x) in board[row]: #check number repeats in the row
+            continue #if yes go to next number (increment x by 1)
+        else: #else check number repeats in column
+            elecol='' #initialising 
             for rows in board:
-                elecol=elecol+rows[column]
-            if str(x) in elecol:
-                continue
-            else:
-                interboardrow=getinterboardrow(row,column)
-                if str(x) in interboardrow:
-                    continue
-                else:
-                    board[row]=board[row][:column]+str(x)+board[row][column+1:]
-                    return True
-    if board[row].isnumeric():
+                elecol=elecol+rows[column] #getting a column in single string
+            if str(x) in elecol: #check if number repeats in a column
+                continue # if yes go to next number (increment x by 1)
+            else: #check if number repeats in 3x3 grid
+                interboardrow=getinterboardrow(row,column) #getting 3x3 grid in a single string 
+                if str(x) in interboardrow: #check if number repeats in 3x3 grid
+                    continue # if yes go to next number (increment x by 1)
+                else: #enter the number in row x column
+                    board[row]=board[row][:column]+str(x)+board[row][column+1:] 
+                    return True #return true stating successful entry
+    if board[row].isnumeric(): #if the entry is number return true stating successful entry
         return True
-    return False
+    return False #if x exceeds 9 and entry is not number then return false stating unsuccessful entry
 
-def backtractcoord(board,refboard,i,j):
-    for k in range(i,-1,-1):
-        for l in range(j,-1,-1):
-            if refboard[k][l]=='0':
-                start=board[k][l]
-                board[k]=board[k][:l]+'-'+board[k][l+1:]
-                return k,l,start
-        j=8
+def backtractcoord(board,refboard,i,j): #get location of previous filled element but was initailly unfilled refrence from (refboard)
+    for k in range(i,-1,-1): #go back by one row
+        for l in range(j,-1,-1): #go back by one column
+            if refboard[k][l]=='0': #checking in refboard that initially it was unfilled
+                start=board[k][l] #get value of number to start for filling element
+                board[k]=board[k][:l]+'-'+board[k][l+1:] #replacing number with '-'
+                return k,l,start #return position and starting number for filling element
+        j=8 #start from last column in a new row
 
 def backtrack(board,refboard,i,j,start):
     for row in range(0,9,1):
@@ -86,7 +86,6 @@ def createinterboard(board):
             interboard.append(board[x][y:y+3]+board[x+1][y:y+3]+board[x+2][y:y+3])
     return interboard
 
-print('Created by ParamaSys For any details contact reply.paramasys@gmail.com')
 board=getinput()
 print('Entered Sudoku Board is as follows:')
 printboard(board)
