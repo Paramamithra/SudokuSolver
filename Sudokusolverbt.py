@@ -33,9 +33,9 @@ def getinterboardrow(row,column): #Get 3x3 grid as a single string
     interrow=int(row/3)
     intercolumn=int(column/3)
     interboard=createinterboard(board)
-    return interboard[interrow*3+intercolumn]
+    return interboard[interrow*3+intercolumn] #return 3x3 grid as a single string
 
-def fillelement(row,column,start): #enter valid entry in row x column
+def fillelement(row,column,start): #enter valid entry in row x column 
     for x in range(int(start)+1,10,1): #check each number from start
         if str(x) in board[row]: #check number repeats in the row
             continue #if yes go to next number (increment x by 1)
@@ -65,23 +65,23 @@ def backtractcoord(board,refboard,i,j): #get location of previous filled element
                 return k,l,start #return position and starting number for filling element
         j=8 #start from last column in a new row
 
-def backtrack(board,refboard,i,j,start):
-    for row in range(0,9,1):
-        if row<i:continue
-        for column in range(0,9,1):
-            if column<j: continue
-            if not board[row][column].isnumeric():
-                check=fillelement(row,column,start)
-                start=0
-                if not check:
-                    k,l,start=backtractcoord(board,refboard,row,column-1)
-                    backtrack(board,refboard,k,l,start)
-        j=0
-    i=0
+def backtrack(board,refboard,i,j,start): #iterating through all elements 
+    for row in range(0,9,1): #iterating through each row
+        if row<i:continue #for row index equal or greater than last fill
+        for column in range(0,9,1): #iterating through each column
+            if column<j: continue #for column index equal or greater than last fill
+            if not board[row][column].isnumeric(): #check if the element is not filled
+                check=fillelement(row,column,start) #fill and get bool as success or unsccuessful in return
+                start=0 #start from 0 for next filling
+                if not check: #if unsuccesful
+                    k,l,start=backtractcoord(board,refboard,row,column-1) #get location of previous filled element but was initailly unfilled refrence from (refboard)
+                    backtrack(board,refboard,k,l,start) #backtrack
+        j=0 #initialise last fill as 0
+    i=0 #initialise last fill as 0
 
-def createinterboard(board):
+def createinterboard(board): #create array in which each element is 3x3 grid elements
     interboard=[]
-    for x in range(0,9,3):
+    for x in range(0,9,3): 
         for y in range(0,9,3):
             interboard.append(board[x][y:y+3]+board[x+1][y:y+3]+board[x+2][y:y+3])
     return interboard
